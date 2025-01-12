@@ -1,0 +1,121 @@
+python3 --version
+mkdir retro_game && cd retro_game
+touch dungeon_adventure.py
+#!/usr/bin/env python3
+
+import random
+
+def show_intro():
+    print("Welcome to the Retro Dungeon Adventure!")
+    print("======================================\n")
+    name = input("What is your name, adventurer? ")
+    print(f"\nGreetings, {name}! Your quest begins now...\n")
+    return name
+player = {
+    'name': '',
+    'health': 100,
+    'attack': 10,
+    'healing_potions': 2
+}
+
+enemies = ['Goblin', 'Skeleton', 'Orc', 'Dark Knight']
+treasures = ['Gold Coin', 'Silver Sword', 'Healing Potion', 'Magic Ring']
+def encounter_enemy():
+    enemy = random.choice(enemies)
+    enemy_health = random.randint(30, 70)
+    print(f"A wild {enemy} appears with {enemy_health} health!\n")
+
+    while enemy_health > 0 and player['health'] > 0:
+        print("Choose an action:")
+        print("1. Attack")
+        print("2. Use Healing Potion")
+        print("3. Run Away")
+
+        choice = input("> ")
+
+        if choice == '1':
+            damage = random.randint(5, player['attack'])
+            enemy_health -= damage
+            print(f"\nYou strike the {enemy} for {damage} damage!")
+
+            if enemy_health <= 0:
+                print(f"The {enemy} has been defeated!\n")
+                found_treasure = random.choice(treasures)
+                print(f"You found a {found_treasure} on the {enemy}.\n")
+                if found_treasure == 'Healing Potion':
+                    player['healing_potions'] += 1
+                else:
+                    player['attack'] += 5
+            else:
+                enemy_damage = random.randint(5, 15)
+                player['health'] -= enemy_damage
+                print(f"The {enemy} hits you for {enemy_damage} damage!")
+                print(f"Your health is now {player['health']}.\n")
+
+        elif choice == '2':
+            if player['healing_potions'] > 0:
+                heal_amount = random.randint(15, 30)
+                player['health'] += heal_amount
+                player['healing_potions'] -= 1
+                print(f"\nYou use a healing potion and restore {heal_amount} health!")
+                print(f"Your health is now {player['health']}.\n")
+            else:
+                print("\nYou have no healing potions left!\n")
+
+        elif choice == '3':
+            print("\nYou successfully run away!\n")
+            break
+        else:
+            print("\nInvalid choice. Try again.\n")
+
+def explore_room():
+    print("You move deeper into the dungeon...\n")
+    event = random.choice(['enemy', 'treasure', 'empty'])
+
+    if event == 'enemy':
+        encounter_enemy()
+    elif event == 'treasure':
+        treasure = random.choice(treasures)
+        print(f"You found a {treasure}!\n")
+        if treasure == 'Healing Potion':
+            player['healing_potions'] += 1
+        else:
+            player['attack'] += 5
+    else:
+        print("The room is empty. A chill runs down your spine...\n")
+def main():
+    player['name'] = show_intro()
+    while player['health'] > 0:
+        explore_room()
+        if player['health'] <= 0:
+            print("You have perished in the dungeon. Game over.\n")
+            break
+        continue_game = input("Do you wish to continue exploring? (yes/no) ").lower()
+        if continue_game != 'yes':
+            print(f"\nThank you for playing, {player['name']}! Your final stats:")
+            print(f"Health: {player['health']}")
+            print(f"Attack: {player['attack']}")
+            print(f"Healing Potions: {player['healing_potions']}\n")
+            break
+
+if __name__ == '__main__':
+    main()
+chmod +x dungeon_adventure.py
+./dungeon_adventure.py
+sudo apt-get install python3-pygame
+import pygame
+
+pygame.init()
+screen = pygame.display.set_mode((640, 480))
+pygame.display.set_caption('Retro Game')
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    screen.fill((0, 0, 0))
+    # Game drawing and logic go here
+    pygame.display.flip()
+
+pygame.quit()
